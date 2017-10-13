@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "First project for IGME 590, starting from canvas-syncing-ii",
   "main": "./src/server.js",
-  "repository": "https://github.com/mfasman95/canvas-syncing-ii",
+  "repository": "https://github.com/mfasman95/590-project-1",
   "author": "Matthew Fasman <mfasman95@gmail.com>",
   "license": "MIT",
   "scripts": {
