@@ -60,6 +60,7 @@ const handleEvent = (sock, params) => {
       const joined = ROOMS[data.roomName].addPlayer(socket.id);
       if (joined) {
         emitter('JOIN_ROOM', { roomName: data.roomName }, socket);
+        emitter('DRAWING_UPDATE', { drawingArray: ROOMS[socket.inRoom].drawingArray }, socket);
         emitter('CHANGE_PAGE', { page: 'GAME' }, socket);
         return emitToAll('UPDATE_ROOM', {
           room: ROOMS[data.roomName],
