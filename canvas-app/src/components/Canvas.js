@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Layer, Stage, Image } from 'react-konva';
-import { emit } from './../scripts/redux';
+import { emit } from './../scripts/socket';
 import { Button } from 'react-bootstrap';
 
 const random0to255 = () => Math.floor(Math.random() * 255);
@@ -123,7 +123,7 @@ class Canvas extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    drawingArray: state.drawingArray,
+    drawingArray: state.canvas.drawingArray,
   }
 }
 

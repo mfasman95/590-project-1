@@ -1,5 +1,5 @@
 module.exports = {
-  DEFAULT_PORT: 3000,
+  DEFAULT_PORT: 3001,
   EMIT_KEYS: {
     server: 'serverEmit',
     client: 'clientEmit',

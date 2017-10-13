@@ -1,5 +1,6 @@
 const { log, warn, socketOut, socketIn } = require('./utility/logger');
 const { DEFAULT_PORT, EMIT_KEYS } = require('./utility/constants');
+const { ROOMS, createRoom } = require('./game/manageRooms');
 const express = require('express');
 
 const PORT = process.env.PORT || process.env.NODE_PORT || DEFAULT_PORT;
@@ -10,7 +11,7 @@ const expressHandler = require('./express/expressHandler');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-let drawingArray = [];
+const connectedSockets = {};
 
 const makeEmitObj = eventName => data => Object.assign({}, { eventName, data: data || 'No Data Provided' });
 const emitter = (eventName, data, socket) => {
@@ -34,14 +35,17 @@ const handleConnect = (sock) => {
 
   socketIn(`Socket ${socket.id} has connected to the server...`);
 
-  // Send initial drawing update to client on connect
-  emitter('DRAWING_UPDATE', { drawingArray }, socket);
+  connectedSockets[socket.id] = socket;
+
+  emitter('INIT_STATE', { rooms: ROOMS }, socket);
 };
 
 const handleDisconnect = (sock) => {
   const socket = sock;
 
   socketIn(`Socket ${socket.id} has disconnected from the server`);
+
+  delete connectedSockets[socket.id];
 };
 
 const handleEvent = (sock, params) => {
@@ -51,13 +55,34 @@ const handleEvent = (sock, params) => {
   socketIn(`Received event ${eventName} from socket ${socket.id}`);
 
   switch (eventName) {
+    case 'joinRoom' : {
+      socket.inRoom = data.roomName;
+      const joined = ROOMS[data.roomName].addPlayer(socket.id);
+      if (joined) {
+        emitter('JOIN_ROOM', { roomName: data.roomName }, socket);
+        emitter('CHANGE_PAGE', { page: 'GAME' }, socket);
+        return emitToAll('UPDATE_ROOM', {
+          room: ROOMS[data.roomName],
+        });
+      }
+      return emitter('FAILED_ROOM_JOIN', {}, socket);
+    }
+    case 'createRoom' : {
+      const created = createRoom(data.roomName);
+      if (created) {
+        return emitToAll('UPDATE_ROOM', {
+          room: ROOMS[data.roomName],
+        });
+      }
+      return emitter('FAILED_TO_MAKE_ROOM', {}, socket);
+    }
     case 'lineDraw': {
-      drawingArray.push(data.newLine);
-      return emitToAll('DRAWING_UPDATE', { drawingArray });
+      ROOMS[socket.inRoom].addLine(data.newLine);
+      return emitToAll('DRAWING_UPDATE', { drawingArray: ROOMS[socket.inRoom].drawingArray });
     }
     case 'clearCanvas': {
-      drawingArray = [];
-      return emitToAll('DRAWING_UPDATE', { drawingArray });
+      ROOMS[socket.inRoom].clearDrawing();
+      return emitToAll('DRAWING_UPDATE', { drawingArray: ROOMS[socket.inRoom].drawingArray });
     }
     default: { return warn(`Event ${eventName} received without a handler`); }
   }

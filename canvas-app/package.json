@@ -2,6 +2,7 @@
   "name": "canvas-app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3001/",
   "dependencies": {
     "bootstrap": "3",
     "extend": "^3.0.1",
