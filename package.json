@@ -1,0 +1,33 @@
+{
+  "name": "590-project-1",
+  "version": "1.0.1",
+  "description": "First project for IGME 590, starting from canvas-syncing-ii",
+  "main": "./src/server.js",
+  "repository": "https://github.com/mfasman95/canvas-syncing-ii",
+  "author": "Matthew Fasman <mfasman95@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "nodemon": "nodemon ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\""
+  },
+  "dependencies": {
+    "chalk": "^2.1.0",
+    "express": "^4.15.4",
+    "socket.io": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.6.1",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "nodemon": "^1.12.0"
+  },
+  "eslintConfig": {
+    "extends": "airbnb/base",
+    "rules": {
+      "no-underscore-dangle": "off",
+      "no-plusplus": "off"
+    }
+  }
+}

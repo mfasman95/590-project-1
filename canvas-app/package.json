@@ -1,0 +1,24 @@
+{
+  "name": "canvas-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "3",
+    "extend": "^3.0.1",
+    "konva": "^1.6.8",
+    "react": "15.6.2",
+    "react-bootstrap": "^0.31.3",
+    "react-dom": "15.6.2",
+    "react-konva": "^1.1.4",
+    "react-redux": "^5.0.6",
+    "react-scripts": "1.0.14",
+    "redux": "^3.7.2",
+    "socket.io-client": "^2.0.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
