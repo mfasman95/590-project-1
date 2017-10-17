@@ -13,6 +13,7 @@ class RoomButton extends Component {
       roomName: this.props.room.name,
     });
   }
+  
   render() {
     const room = this.props.room;
     let canEnter = true;

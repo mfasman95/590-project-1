@@ -11,6 +11,7 @@ class CreateRoom extends React.Component {
 
     this.HI_RoomName = this.HI_RoomName.bind(this);
     this.emitRoom = this.emitRoom.bind(this);
+    this.handleEnter = this.handleEnter.bind(this);
   }
 
   HI_RoomName(e){
@@ -21,6 +22,8 @@ class CreateRoom extends React.Component {
     emit('createRoom', { roomName: this.state.value });
     this.setState({value: ''});
   }
+
+  handleEnter(e){ if(e.key === 'Enter') this.emitRoom(); }
 
   render() {
     return (
@@ -34,6 +37,7 @@ class CreateRoom extends React.Component {
             value={this.state.value}
             onInput={this.HI_RoomName}
             placeholder={'Type The Room Name Here'}
+            onKeyPress={this.handleEnter}
           />
           <InputGroup.Button>
             <Button bsStyle='success' onClick={this.emitRoom}>

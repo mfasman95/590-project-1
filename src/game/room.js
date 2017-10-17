@@ -18,8 +18,8 @@ class Room {
     return false;
   }
   removePlayer(socketId) {
-    if (this.players[socketId]) {
-      delete this.occupants[socketId];
+    if (this.players.includes(socketId)) {
+      this.players.splice(this.players.indexOf(socketId), 1);
       this.currentOccupancy = Object.keys(this.players).length;
     }
   }

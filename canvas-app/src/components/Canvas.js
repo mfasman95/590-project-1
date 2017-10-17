@@ -17,6 +17,9 @@ class Drawing extends Component {
     }
 
     this.updateCanvas = this.updateCanvas.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
   }
 
   updateCanvas(){
@@ -44,21 +47,18 @@ class Drawing extends Component {
     ctx.strokeStyle = myColor;
 
     this.setState({ canvas, ctx });
-
-    // TODO: Find a better solution
-    setInterval(this.updateCanvas, 1000/120); // Update at frame rate
   }
 
-  handleMouseDown = () => {
+  handleMouseDown() {
     this.setState({ isDrawing: true });
     this.lastPointerPosition = this.image.getStage().getPointerPosition();
   };
 
-  handleMouseUp = () => {
+  handleMouseUp() {
     this.setState({ isDrawing: false });
   };
 
-  handleMouseMove = ({ evt }) => {
+  handleMouseMove({ evt }) {
     const { isDrawing } = this.state;
 
     if (isDrawing) {
@@ -72,13 +72,14 @@ class Drawing extends Component {
         y: pointerPos.y - this.image.y()
       };
       this.lastPointerPosition = pointerPos;
-      const newLine = {startPos, endPos, color: myColor};
+      const newLine = {startPos, endPos, color: myColor, time: new Date()};
 
       emit('lineDraw', { newLine });
     }
   };
 
   render() {
+    if (this.state.ctx && this.state.canvas) this.updateCanvas();
     return (
       <Image
         image={this.state.canvas}

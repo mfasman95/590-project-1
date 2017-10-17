@@ -43,7 +43,12 @@ const handleConnect = (sock) => {
 const handleDisconnect = (sock) => {
   const socket = sock;
 
-  socketIn(`Socket ${socket.id} has disconnected from the server`);
+  // Remove socket from the room it is in, if that room exists
+  if (ROOMS[socket.inRoom]) {
+    const room = ROOMS[socket.inRoom];
+    room.removePlayer(socket.id);
+    emitToAll('UPDATE_ROOM', { room });
+  }
 
   delete connectedSockets[socket.id];
 };
@@ -60,7 +65,7 @@ const handleEvent = (sock, params) => {
       const joined = ROOMS[data.roomName].addPlayer(socket.id);
       if (joined) {
         emitter('JOIN_ROOM', { roomName: data.roomName }, socket);
-        emitter('DRAWING_UPDATE', { drawingArray: ROOMS[socket.inRoom].drawingArray }, socket);
+        emitter('CANVAS_UPDATE', { drawingArray: ROOMS[socket.inRoom].drawingArray }, socket);
         emitter('CHANGE_PAGE', { page: 'GAME' }, socket);
         return emitToAll('UPDATE_ROOM', {
           room: ROOMS[data.roomName],
@@ -79,11 +84,11 @@ const handleEvent = (sock, params) => {
     }
     case 'lineDraw': {
       ROOMS[socket.inRoom].addLine(data.newLine);
-      return emitToAll('DRAWING_UPDATE', { drawingArray: ROOMS[socket.inRoom].drawingArray });
+      return emitToAll('NEW_LINE', { line: data.newLine });
     }
     case 'clearCanvas': {
       ROOMS[socket.inRoom].clearDrawing();
-      return emitToAll('DRAWING_UPDATE', { drawingArray: ROOMS[socket.inRoom].drawingArray });
+      return emitToAll('CANVAS_UPDATE', { drawingArray: ROOMS[socket.inRoom].drawingArray });
     }
     default: { return warn(`Event ${eventName} received without a handler`); }
   }
