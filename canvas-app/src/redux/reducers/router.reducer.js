@@ -16,8 +16,6 @@ const actionHandlers = {
   },
 };
 
-export const changePage = page => ({ type: 'CHANGE_PAGE', page });
-
 // Export the reducer
 export default (state = initialState, action) => {
   // Make an object for the return state

@@ -10,6 +10,7 @@ const actionHandlers = {
   CANVAS_UPDATE: (returnState, action) => {
     const rs = returnState;
 
+    // When this action is received, overwrite the existing drawing array with the new one
     rs.drawingArray = action.drawingArray;
 
     return rs;
@@ -17,8 +18,9 @@ const actionHandlers = {
   NEW_LINE: (returnState, action) => {
     const rs = returnState;
 
+    // When this action is received, add the new set of drawing objects to the drawing array
     rs.drawingArray = rs.drawingArray.concat(action.line);
-    // Sort array by timestamp whenever a new line comes in
+    // Sort array by timestamp whenever a new line comes in, to ensure consistent drawing order
     rs.drawingArray.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
 
     return rs;

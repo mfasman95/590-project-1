@@ -1,19 +1,21 @@
 class Room {
   constructor(name) {
-    this.name = name;
-    this.maxOccupancy = 8;
-    this.minRequired = 4;
-    this.gameStarted = false;
-    this.word = '';
-    this.players = [];
-    this.playersObj = {};
-    this.currentOccupancy = this.players.length;
-    this.drawingArray = [];
+    // Set the initial state of a room
+    this.name = name; // Room name
+    this.maxOccupancy = 8; // Max room occupancy
+    this.minRequired = 4; // Min players required for game
+    this.gameStarted = false; // Whether or not game has begun
+    this.word = ''; // Word that the players are trying to draw
+    this.players = []; // Array of player ids
+    this.playersObj = {}; // Object containing all relevant player data
+    this.currentOccupancy = this.players.length; // Current number of players in room
+    this.drawingArray = []; // Array of lines to draw on the client canvases for this room
   }
 
   addPlayer(socket) {
     if (this.currentOccupancy < this.maxOccupancy) {
       this.players.push(socket.id);
+      // When a player is added, store the relevant player data in an object by their socket id
       this.playersObj[socket.id] = {
         id: socket.id,
         color: socket.color,
@@ -95,13 +97,17 @@ class Room {
   }
 
   accuse(playerId) {
+    // Trigger the end of the game by accusing a player of being the fake artist
     const success = (this.fakeArtist === playerId);
+    // Clear the gamestate
     this.endGame();
+    // Return whether or not the accusation was successful
     return success;
   }
 
   addLine(line) { this.drawingArray = this.drawingArray.concat(line); }
   clearDrawing() { this.drawingArray = []; }
+  // Function for randomly selecting a player
   randomPlayer() { return this.players[Math.floor(Math.random() * this.players.length)]; }
 }
 

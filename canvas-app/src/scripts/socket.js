@@ -12,6 +12,7 @@ export const emit = (eventName, data) => socket.emit('clientEmit', { eventName, 
 // Convery emits from the server directly into actions for the store
 socket.on('serverEmit', (emitData) => {
   const action = { type: emitData.eventName };
+  // Merges the action type and emit data into a single object
   Object.assign(action, emitData.data);
   store.dispatch(action);
 });

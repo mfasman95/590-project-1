@@ -1,3 +1,5 @@
+// Functionality for logging to the console in various colors
+// Useful for debugging
 const chalk = require('chalk');
 
 const NODE_ENV = process.env.NODE_ENV || 'dev';

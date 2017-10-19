@@ -16,6 +16,7 @@ const actionHandlers = {
   GAME_END: (returnState) => {
     const rs = returnState;
 
+    // When this action is received, clear any previous gamestate data
     if (rs.gameStarted !== undefined) delete rs.gameStarted;
     if (rs.wordSelected !== undefined) delete rs.wordSelected;
     if (rs.word !== undefined) delete rs.word;
@@ -24,6 +25,7 @@ const actionHandlers = {
   WORD_SELECTED: (returnState, action) => {
     const rs = returnState;
 
+    // When this action is received, set the word that is being used for this round
     rs.wordSelected = true;
     rs.word = action.word;
     return rs;
@@ -31,6 +33,9 @@ const actionHandlers = {
   ACCUSATION_RESULT: (returnState, action) => {
     const rs = returnState;
 
+    // When this action is received, set the artistsWin variable to the result boolean
+    // True = artists win!
+    // False = fake wins!
     rs.artistsWin = action.result;
     return rs;
   },
