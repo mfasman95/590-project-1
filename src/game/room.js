@@ -41,10 +41,8 @@ class Room {
       this.currentOccupancy = this.players.length;
       // If the game is currently going, we might need to end it
       if (this.gameStarted) {
-        console.log('Blah1', this.fakeArtist, socketId, this.currentOccupancy, this.minRequired);
-        // If the fake artist quits or the room doesn't have enough to continue the games, end the game
+        // If the fake artist quits or the room doesn't have enough users, end the game
         if (this.fakeArtist === socketId || this.currentOccupancy < this.minRequired) {
-          console.log('blah2');
           this.endGame();
           return true;
         }

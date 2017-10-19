@@ -100,7 +100,6 @@ const handleEvent = (sock, params) => {
         emitter('LEAVE_ROOM', {}, socket);
       }
       const gameEnded = room.removePlayer(socket.id);
-      console.log(gameEnded);
       if (gameEnded) emitToRoom('GAME_END', {}, room);
 
       return emitToAll('UPDATE_ROOM', { room });

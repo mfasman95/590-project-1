@@ -1,4 +1,3 @@
-/* eslint-disable */
 const chalk = require('chalk');
 
 const NODE_ENV = process.env.NODE_ENV || 'dev';
@@ -10,14 +9,16 @@ const logLoop = (chalkType, arr) => {
       switch (typeof data) {
         case 'object': {
           if (data instanceof Array) {
-            for (let i = 0; i < data.length; i++) console.log(chalkType(data[i]));
-          }
-          else {
+            // eslint-disable-next-line no-console
+            for (let j = 0; j < data.length; j++) console.log(chalkType(data[j]));
+          } else {
             const keys = Object.keys(data);
-            for (let i = 0; i < keys.length; i++) console.log(chalkType(data[keys[i]]));
+            // eslint-disable-next-line no-console
+            for (let j = 0; j < keys.length; j++) console.log(chalkType(data[keys[j]]));
           }
           break;
         }
+        // eslint-disable-next-line no-console
         default: { console.log(chalkType(data)); break; }
       }
     }

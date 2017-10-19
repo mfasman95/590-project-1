@@ -5,13 +5,7 @@ const initialState = {};
 
 // Handle actions dispatched to the reducer
 const actionHandlers = {
-  FAILED_ROOM_JOIN: (returnState) => {
-    const rs = returnState;
-
-    console.warn('TODO: FAILED_ROOM_JOIN handler');
-    
-    return rs;
-  },
+  // TODO: Build a notification system for better user feedback
 };
 
 // Export the reducer
