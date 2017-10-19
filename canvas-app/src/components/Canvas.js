@@ -2,60 +2,78 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Layer, Stage, Image } from 'react-konva';
 import { emit } from './../scripts/socket';
-import { Button } from 'react-bootstrap';
-
-const random0to255 = () => Math.floor(Math.random() * 255);
-const randomColor = () => `rgb(${random0to255()},${random0to255()},${random0to255()})`;
-
-const myColor = randomColor();
 
 class Drawing extends Component {
   constructor(props){
     super(props);
     this.state = {
       isDrawing: false,
+      lineArr: [],
+      canDraw: true,
     }
 
     this.updateCanvas = this.updateCanvas.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.drawLine = this.drawLine.bind(this);
   }
 
   updateCanvas(){
-    const { ctx, canvas } = this.state;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for(let i = 0; i < this.props.drawing.length; i++){
-      const { startPos, endPos, color } = this.props.drawing[i];
-      ctx.strokeStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(startPos.x, startPos.y);
-      ctx.lineTo(endPos.x, endPos.y);
-      ctx.closePath();
-      ctx.stroke();
+    for(let i = 0; i < this.props.drawing.length; i++) {
+      this.drawLine(this.props.drawing[i]);
     }
     this.image.getLayer().draw();
   }
 
+  drawLine(line){
+    const { ctx } = this.state;
+    const { startPos, endPos, color } = line;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(startPos.x, startPos.y);
+    ctx.lineTo(endPos.x, endPos.y);
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // If it has become my turn, I can now draw again
+    if (!prevProps.myTurn && this.props.myTurn) this.setState({ canDraw: true });
+    const prevDrawing = prevProps.drawing;
+    const curDrawing = this.props.drawing;
+    // If there is a current AND previous drawing array
+    let curMostRecentTime = '';
+    let prevMostRecentTime = '';
+    if (curDrawing.length > 0) curMostRecentTime = curDrawing[curDrawing.length - 1].time;
+    if (prevDrawing.length > 0) prevMostRecentTime = prevDrawing[prevDrawing.length - 1].time;
+    if (prevMostRecentTime !== curMostRecentTime) this.updateCanvas();
+  }
+
   componentDidMount() {
-    const canvas = document.createElement("canvas");
+    const canvas = document.createElement('canvas');
     canvas.width = this.props.width;
     canvas.height = this.props.height;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     ctx.lineJoin = 'round';
     ctx.lineWidth = 5;
-    ctx.strokeStyle = myColor;
+    ctx.strokeStyle = this.props.myColor;
 
     this.setState({ canvas, ctx });
   }
 
   handleMouseDown() {
-    this.setState({ isDrawing: true });
-    this.lastPointerPosition = this.image.getStage().getPointerPosition();
+    if (this.props.myTurn && this.state.canDraw) {
+      this.setState({ isDrawing: true });
+      this.lastPointerPosition = this.image.getStage().getPointerPosition();
+    }
   };
 
   handleMouseUp() {
-    this.setState({ isDrawing: false });
+    if (this.props.myTurn && this.state.canDraw) {
+      emit('endTurn', { line: this.state.lineArr });
+      this.setState({ isDrawing: false, lineArr: [], canDraw: false });
+    }
   };
 
   handleMouseMove({ evt }) {
@@ -72,14 +90,20 @@ class Drawing extends Component {
         y: pointerPos.y - this.image.y()
       };
       this.lastPointerPosition = pointerPos;
-      const newLine = {startPos, endPos, color: myColor, time: new Date()};
+      
+      const newLine = {startPos, endPos, color: this.props.myColor, time: new Date()};
+      
+      this.drawLine(newLine);
+      this.image.getLayer().draw();
 
-      emit('lineDraw', { newLine });
+      let newLineArr = this.state.lineArr.slice(0);
+      newLineArr.push(newLine);
+
+      this.setState({ lineArr: newLineArr });
     }
   };
 
   render() {
-    if (this.state.ctx && this.state.canvas) this.updateCanvas();
     return (
       <Image
         image={this.state.canvas}
@@ -100,20 +124,18 @@ class Canvas extends Component {
     width: 300,
     height: 300,
   }
-  clearCanvas(){ emit('clearCanvas'); }
-
   render() {
     return (
       <div>
-        <Button bsStyle='primary' bsSize='large' onClick={this.clearCanvas}>Clear Canvas</Button>
-        <br/>
         <br/>
         <Stage ref='stage' width={this.state.width} height={this.state.height}>
           <Layer>
             <Drawing
               drawing={this.props.drawingArray}
               width={this.state.width || 300}
-              height={this.props.height || 300}
+              height={this.state.height || 300}
+              myTurn={this.props.myTurn}
+              myColor={this.props.myColor}
             />
           </Layer>
         </Stage>
@@ -125,6 +147,7 @@ class Canvas extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     drawingArray: state.canvas.drawingArray,
+    myColor: state.main.color,
   }
 }
 

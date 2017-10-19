@@ -4,11 +4,12 @@ import { Well, Col } from 'react-bootstrap';
 import RoomButton from './../RoomButton';
 import CreateRoom from './../CreateRoom';
 
-class Home extends Component {
+class Rooms extends Component {
   render() {
     const hasRooms = Object.keys(this.props.rooms).length > 0;
     return (
       <Col xs={10} xsOffset={1}>
+        <h1>Welcome <b>{this.props.name}</b></h1>
         <h2>Create A Room!</h2>
         <CreateRoom />
         <h2>Enter A Room!</h2>
@@ -31,7 +32,8 @@ class Home extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     rooms: state.main.rooms,
+    name: state.main.name,
   }
 }
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps)(Rooms);

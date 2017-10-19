@@ -1,42 +1,37 @@
 import extend from 'extend';
 
 // Set initial application state
-const initialState = {
-  rooms: {},
-};
+const initialState = {};
 
 // Handle actions dispatched to the reducer
 const actionHandlers = {
-  INIT_STATE: (returnState, action) => {
+  GAME_START: (returnState) => {
     const rs = returnState;
 
-    rs.rooms = action.rooms;
-    rs.myId = action.socketId;
-    rs.color = action.color;
+    // Clear the previous game result
+    if (rs.artistsWin) delete rs.artistsWin;
+    rs.gameStarted = true;
     return rs;
   },
-  SET_NAME: (returnState, action) => {
+  GAME_END: (returnState) => {
     const rs = returnState;
 
-    rs.name = action.name;
+    if (rs.gameStarted !== undefined) delete rs.gameStarted;
+    if (rs.wordSelected !== undefined) delete rs.wordSelected;
+    if (rs.word !== undefined) delete rs.word;
     return rs;
   },
-  UPDATE_ROOM: (returnState, action) => {
+  WORD_SELECTED: (returnState, action) => {
     const rs = returnState;
 
-    rs.rooms[action.room.name] = action.room;
+    rs.wordSelected = true;
+    rs.word = action.word;
     return rs;
   },
-  JOIN_ROOM: (returnState, action) => {
+  ACCUSATION_RESULT: (returnState, action) => {
     const rs = returnState;
 
-    rs.inRoom = action.roomName;
-    return rs;
-  },
-  LEAVE_ROOM: (returnState) => {
-    const rs = returnState;
-
-    delete rs.inRoom;
+    rs.artistsWin = action.result;
     return rs;
   },
 };

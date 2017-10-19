@@ -17,7 +17,7 @@ const actionHandlers = {
   NEW_LINE: (returnState, action) => {
     const rs = returnState;
 
-    rs.drawingArray.push(action.line);
+    rs.drawingArray = rs.drawingArray.concat(action.line);
     // Sort array by timestamp whenever a new line comes in
     rs.drawingArray.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
 

@@ -1,12 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Home from './pages/Home';
+import Name from './pages/Name';
+import Rooms from './pages/Rooms';
 import Game from './pages/Game';
 
 class Router extends React.Component {
   render() {
     switch(this.props.page) {
-      case 'HOME': { return <Home/> }
+      case 'NAME': { return <Name/> }
+      case 'ROOMS': { return <Rooms/> }
       case 'GAME': { return <Game/> }
       default: {
         return (

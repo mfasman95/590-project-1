@@ -19,8 +19,10 @@ class CreateRoom extends React.Component {
   }
 
   emitRoom(){
-    emit('createRoom', { roomName: this.state.value });
-    this.setState({value: ''});
+    if(this.state.value !== ''){
+      emit('createRoom', { roomName: this.state.value });
+      this.setState({value: ''});      
+    }
   }
 
   handleEnter(e){ if(e.key === 'Enter') this.emitRoom(); }
@@ -40,7 +42,7 @@ class CreateRoom extends React.Component {
             onKeyPress={this.handleEnter}
           />
           <InputGroup.Button>
-            <Button bsStyle='success' onClick={this.emitRoom}>
+            <Button bsStyle='success' onClick={this.emitRoom} disabled={this.state.value === ''}>
               <i className='fa fa-arrow-right'/>
             </Button>
           </InputGroup.Button>

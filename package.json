@@ -29,5 +29,8 @@
       "no-underscore-dangle": "off",
       "no-plusplus": "off"
     }
+  },
+  "nodemonConfig": {
+    "ignore": ["canvas-app/*"]
   }
 }
